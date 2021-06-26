@@ -1,0 +1,26 @@
+[
+  {
+    "id": "Salesforce.FitResultsSpringLoaderPlugin",
+    "description": "Plugin for creating custom spinnaker stage to perfom deployment of machine image, fetch the fit test run ID and display the FIT results in a single stage",
+    "provider": "https://www.salesforce.com",
+    "releases": [
+      {
+        "version": "0.0.3",
+        "date": "2021-06-24T16:57:21.756108Z",
+        "requires": "orca>=0.0.0,deck>=0.0.0",
+        "sha512sum": "ef1f769fef98ffebea1d8287c8d7700d8fd310721615393d0c15a9754eac24295898df6a15af82b3306387d50007093539ea7b036e5f48ba805f1bd2f1d6017b",
+        "preferred": false,
+        "compatibility": [
+
+        ],
+        "url": "https://git.soma.salesforce.com/eshwar-kumar/SingleStageFitResults/releases/download/0.0.2/SingleStageFitResults-0.0.2.zip"
+      }
+    ]
+  }
+]
+
+
+
+
+
+

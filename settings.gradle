@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven { url "https://dl.bintray.com/spinnaker/gradle/" }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'SingleStageFitResults'
+
+include 'singlestagefitresults-orca'
+include 'singlestagefitresults-deck'
+
+def setBuildFile(project) {
+    project.buildFileName = "${project.name}.gradle"
+    project.children.each {
+        setBuildFile(it)
+    }
+}
+
+rootProject.children.each {
+    setBuildFile(it)
+}
+
