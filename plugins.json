@@ -10,9 +10,6 @@
         "requires": "orca>=0.0.0,deck>=0.0.0",
         "sha512sum": "07f3d594a74666d24c86cafa51c718791d8555f0ae731b545f31c9566ec164f4f3667e206a72223323d2e309731c50ac73308bf83a10e27188c5d26c31f51160",
         "preferred": false,
-        "compatibility": [
-
-        ],
         "url": "https://github.com/EshwarNK/SingleStageFitResults/releases/download/0.0.3/SingleStageFitResults-0.0.3.zip"
       }
     ]
