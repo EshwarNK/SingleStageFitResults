@@ -62,14 +62,14 @@ Define Spinnaker Stages with IStageTypeConfig.
 Required options: https://github.com/spinnaker/deck/master/app/scripts/modules/core/src/domain/IStageTypeConfig.ts
 - label -> The name of the Stage
 - description -> Long form that describes what the Stage actually does
-- key -> A unique name for the Stage in the UI; ties to Orca backend
+- key -> ties to Orca backend
 - component -> The rendered React component
 - validateFn -> A validation function for the stage config form.
 */
 
 export const deployFetchTestIdDisplayFitResults: IStageTypeConfig = {
-  key: 'Deploy(DeployGetTestIDFetchResults)',
-  label: `Deploy GetTestID FetchResults`,
+  key: 'DeployFetchTestIdDisplayFitResults',
+  label: `Deploy(DeployGetTestIDFetchResults)`,
   description: 'Stage that performs deployment, retrieves testID and fetch results',
   component: DeployFetchTestIdDisplayFitResultsStageConfig,
   executionDetailsSections: [ExecutionDetailsTasks],
