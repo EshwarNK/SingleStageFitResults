@@ -5,7 +5,7 @@
     "provider": "https://www.salesforce.com",
     "releases": [
         {
-            "version": "0.0.4",
+            "version": "0.0.5",
             "date": "2021-07-02T01:05:46.846179Z",
             "requires": "orca>=0.0.0,deck>=0.0.0",
             "sha512sum": "43bbf060bb9ad1cfe9f3c81671ba2f9c2acab5259250327886b9c326a9cfe545d08f4544063d0a7b3918c8a371ee4786c9af2cae61f0bbc93c13394f097125c9",
