@@ -6,15 +6,17 @@
     "releases": [
         {
             "version": "0.0.5",
-            "date": "2021-07-06T17:21:54.572428Z",
+            "date": "2021-07-07T03:53:02.128518Z",
             "requires": "orca>=0.0.0,deck>=0.0.0",
-            "sha512sum": "79a8df7ca5c2513a0d829863d7a088390552ecff28f76fa822eef1b0559ab02dc07a935137d0988aa3e9c01c2dc6dc5efa089126ccfbe87017793a78b56185c5",
+            "sha512sum": "dc8be9f03ca827d492163acf7475dad999e4bca2b27bdd2a2a1dab2e49e1bbb4e5fa47bcbe05125d8894bf2b4d98e8066887a50c5485c32cee0245d9af31edc9",
             "preferred": false,
             "url": "https://github.com/EshwarNK/SingleStageFitResults/releases/download/0.0.5/SingleStageFitResults-0.0.5.zip"
         }
     ]
   }
 ]
+
+
 
 
 
