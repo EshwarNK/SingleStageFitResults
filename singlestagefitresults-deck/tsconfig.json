@@ -2,6 +2,9 @@
   "extends": "@spinnaker/pluginsdk/pluginconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build/dist",
-    "rootDir": "src"
-  }
+    "rootDir": "src",
+    "lib": ["es2017", "dom", "ES2018.Promise"]
+  },
+  "exclude": ["build", "node", "node_modules" ],
+  "include": ["src/*.ts", "src/*.tsx", "src/**/*.ts", "src/**/*.tsx"]
 }
