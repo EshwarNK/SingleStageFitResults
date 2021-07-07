@@ -1,8 +1,8 @@
 import { IDeckPlugin } from '@spinnaker/core';
 import { deployFetchTestIdDisplayFitResults } from './DeployFetchTestIdDisplayFitResults';
-// import { initialize } from './DeployFetchTestIdDisplayFitResultsStageConfig';
+import { initialize } from './DeployFetchTestIdDisplayFitResults';
 
 export const plugin: IDeckPlugin = {
-  // initialize,
+  initialize,
   stages: [deployFetchTestIdDisplayFitResults],
 };

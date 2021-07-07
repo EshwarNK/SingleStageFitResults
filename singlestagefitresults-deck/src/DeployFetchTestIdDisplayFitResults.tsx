@@ -22,6 +22,7 @@ import {
   Validators,
 } from '@spinnaker/core';
 
+import { DeployFetchTestIdDisplayFitResultsStageConfig } from './DeployFetchTestIdDisplayFitResultsStageConfig';
 import { DeployStatus } from './manifestStatus/DeployStatus';
 
 import './DeployFetchTestIdDisplayFitResults.less';
@@ -30,39 +31,39 @@ export const initialize = () => {
   HelpContentsRegistry.register('salesforce.fitResultsSpringLoaderPlugin', 'Spinnaker Plugin');
 };
 
-export function DeployFetchTestIdDisplayFitResultsStageConfig(props: IStageConfigProps) {
-  return (
-    <div className="DeployFetchTestIdDisplayFitResultsStageConfig">
-      <FormikStageConfig
-        {...props}
-        onChange={props.updateStage}
-        render={(props: IFormikStageConfigInjectedProps) => <DeployFetchTestIdDisplayFitResultsStageForm {...props} />}
-      />
-    </div>
-  );
-}
+// export function DeployFetchTestIdDisplayFitResultsStageConfig(props: IStageConfigProps) {
+//   return (
+//     <div className="DeployFetchTestIdDisplayFitResultsStageConfig">
+//       <FormikStageConfig
+//         {...props}
+//         onChange={props.updateStage}
+//         render={(props: IFormikStageConfigInjectedProps) => <DeployFetchTestIdDisplayFitResultsStageForm {...props} />}
+//       />
+//     </div>
+//   );
+// }
 
-function DeployFetchTestIdDisplayFitResultsStageForm(props: IFormikStageConfigInjectedProps) {
-  return (
-    <div className="form-horizontal">
-      <h3>
-        <b>Deploy Stage</b>
-      </h3>
-      <h4> Basic Settings </h4>
-      <FormikFormField
-        name="account"
-        label="Account"
-        required={true}
-        input={(inputProps: IFormInputProps) => <ReactSelectInput {...inputProps} />}
-      />
-      <FormikFormField
-        name="OverrideNamespace"
-        label="Override Namespace"
-        input={(props) => <CheckboxInput text={''} {...props} />}
-      />
-    </div>
-  );
-}
+// function DeployFetchTestIdDisplayFitResultsStageForm(props: IFormikStageConfigInjectedProps) {
+//   return (
+//     <div className="form-horizontal">
+//       <h3>
+//         <b>Deploy Stage</b>
+//       </h3>
+//       <h4> Basic Settings </h4>
+//       <FormikFormField
+//         name="account"
+//         label="Account"
+//         required={true}
+//         input={(inputProps: IFormInputProps) => <ReactSelectInput {...inputProps} />}
+//       />
+//       <FormikFormField
+//         name="OverrideNamespace"
+//         label="Override Namespace"
+//         input={(props) => <CheckboxInput text={''} {...props} />}
+//       />
+//     </div>
+//   );
+// }
 
 export const deployFetchTestIdDisplayFitResults: IStageTypeConfig = {
   key: 'DeployFetchTestIdDisplayFitResults',
