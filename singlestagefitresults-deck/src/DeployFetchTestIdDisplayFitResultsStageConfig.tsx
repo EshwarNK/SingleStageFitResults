@@ -75,17 +75,17 @@ export class DeployFetchTestIdDisplayFitResultsStageConfig extends React.Compone
     this.stage = stage;
   }
 
-  public componentDidMount() {
-    this.fetchAccounts();
-  }
+  // public componentDidMount() {
+  //   this.fetchAccounts();
+  // }
 
-  private fetchAccounts = (): void => {
-    observableFrom(AccountService.getAllAccountDetailsForProvider('kubernetes'))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((accounts: IAccountDetails[]) => {
-        this.setState({ accounts });
-      });
-  };
+  // private fetchAccounts = (): void => {
+  //   observableFrom(AccountService.getAllAccountDetailsForProvider('kubernetes'))
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe((accounts: IAccountDetails[]) => {
+  //       this.setState({ accounts });
+  //     });
+  // };
 
   public componentWillUnmount() {
     this.destroy$.next();
