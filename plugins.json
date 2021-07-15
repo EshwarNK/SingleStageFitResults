@@ -5,16 +5,18 @@
     "provider": "https://www.salesforce.com",
     "releases": [
         {
-            "version": "0.0.12",
-            "date": "2021-07-15T04:27:31.844789Z",
+            "version": "0.0.13",
+            "date": "2021-07-15T04:48:00.751471Z",
             "requires": "orca>=0.0.0,deck>=0.0.0",
-            "sha512sum": "5b4a5aae0b7a3fc5884d61c95d617158cf69f5f3b5b977684d52cbbab2f3593de6fac20f642a079e4e631863eed407cf4a996052b4fd8ccb11c4acdd129df417",
+            "sha512sum": "5ff3934ed9e43e4117f0848cfac182631102765a663a77bef005c9d89bf0aa06aeb1100b18bdd4b250a59a7368c1841be2808bf0e9984c1807ba060004cf64aa",
             "preferred": false,
-            "url": "https://github.com/EshwarNK/SingleStageFitResults/releases/download/0.0.12/SingleStageFitResults-0.0.12.zip"
+            "url": "https://github.com/EshwarNK/SingleStageFitResults/releases/download/0.0.13/SingleStageFitResults-0.0.13.zip"
         }
     ]
   }
 ]
+
+
 
 
 
