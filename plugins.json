@@ -1,20 +1,20 @@
-[
-  {
-    "id": "Salesforce.FitResultsSpringLoaderPlugin",
-    "description": "Plugin for creating custom spinnaker stage to perfom deployment of machine image, fetch the fit test run ID and display the FIT results in a single stage",
-    "provider": "https://www.salesforce.com",
-    "releases": [
-        {
-            "version": "0.0.15",
-            "date": "2021-07-15T23:39:04.898557Z",
-            "requires": "orca>=0.0.0,deck>=0.0.0",
-            "sha512sum": "4676f4b26b2f0fd473004aa3be659ed4eea00e0f15c3a26575afa820e63fe97ec6c9b18a5d0b7518c6be53cac1dc4eaf6a0ed18d0e6d8b2282c6aa544c402d2e",
-            "preferred": false,
-            "url": "https://github.com/EshwarNK/SingleStageFitResults/releases/download/0.0.15/SingleStageFitResults-0.0.15.zip"
-        }
-    ]
-  }
-]
+{
+  "id": "Salesforce.FitResultsSpringLoaderPlugin",
+  "description": "Plugin for creating custom spinnaker stage to perfom deployment of machine image, fetch the fit test run ID and display the FIT results in a single stage",
+  "provider": "https://www.salesforce.com",
+  "releases": [
+      {
+          "version": "0.0.17",
+          "date": "2021-07-16T03:56:26.779076Z",
+          "requires": "orca>=0.0.0,deck>=0.0.0",
+          "sha512sum": "c6d723ff1520d611a9765d14f018f8640599fcca5e72c06a1f82ac656039342153938579dbac415c6764eb2e71ff916977d67efa29edc887905448d4eb6cf6a6",
+          "preferred": false,
+          "url": "https://github.com/EshwarNK/SingleStageFitResults/releases/download/0.0.17/SingleStageFitResults-0.0.17.zip"
+      }
+  ]
+}
+
+
 
 
 
