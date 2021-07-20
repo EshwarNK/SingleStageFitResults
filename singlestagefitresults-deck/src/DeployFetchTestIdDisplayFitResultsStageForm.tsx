@@ -258,6 +258,7 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
   public render() {
     const deploystage = this.props.formik.values;
     const { stage } = this.props;
+    // console.log(this.props);
     let outputSource = <div />;
     if (stage?.consumeArtifactSource === 'propertyFile') {
       outputSource = this.logSourceForm();
