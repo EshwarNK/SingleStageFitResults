@@ -388,6 +388,14 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
             />
           </>
         )}
+        {/* <StageConfigField label="Required Artifacts to Bind" helpKey="kubernetes.manifest.requiredArtifactsToBind">
+          <ManifestBindArtifactsSelector
+            bindings={this.getRequiredArtifactsRunJobManifest()}
+            onChangeBindings={this.onRequiredArtifactsChangedRunJobManifest}
+            pipeline={this.props.pipeline}
+            stage={stage}
+          />
+        </StageConfigField> */}
         <h4>Output</h4>
         <StageConfigField label="Capture Output From" helpKey="kubernetes.runJob.captureSource">
           <div>

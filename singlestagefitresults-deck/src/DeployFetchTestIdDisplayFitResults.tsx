@@ -66,6 +66,7 @@ export const initialize = () => {
 // }
 
 export const deployFetchTestIdDisplayFitResults: IStageTypeConfig = {
+  //Note: the key here should match with the name mentioned in the @StageDefinitionBuilder.Aliases({}) in DeployFetchTestIdDisplayFitResults.java
   key: 'DeployFetchTestIdDisplayFitResults',
   label: `Deploy(DeployGetTestIDFetchResults)`,
   description: 'Stage that performs deployment, retrieves testID and fetch results',

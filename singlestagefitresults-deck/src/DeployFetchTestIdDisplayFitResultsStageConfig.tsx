@@ -97,7 +97,13 @@ export class DeployFetchTestIdDisplayFitResultsStageConfig extends React.Compone
         {...this.props}
         stage={this.stage}
         onChange={this.props.updateStage}
-        render={(props) => <DeployFetchTestIdDisplayFitResultsStageForm {...props} accounts={this.state.accounts} />}
+        render={(props) => (
+          <DeployFetchTestIdDisplayFitResultsStageForm
+            {...props}
+            updateStageField={this.props.updateStage}
+            accounts={this.state.accounts}
+          />
+        )}
       />
     );
   }

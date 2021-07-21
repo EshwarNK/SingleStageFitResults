@@ -28,6 +28,10 @@ import static java.lang.String.format;
  */
 @Component
 @StageDefinitionBuilder.Aliases({"DeployFetchTestIdDisplayFitResults"})
+// The above name "DeployFetchTestIdDisplayFitResults" must be same in three places:
+// 1. In the bean list in FitResultsSpringLoaderPlugin.java
+// 2. In the value corresponding to the key in DeployFetchTestIdDisplayFitResults.tsx (Deck component)
+// 3. In the extensions in orca-local.yml file present in ~/.hal/default/profiles
 public class DeployFetchTestIdDisplayFitResults implements StageDefinitionBuilder {
 
     private static Logger logger = LoggerFactory.getLogger(DeployFetchTestIdDisplayFitResults.class);
