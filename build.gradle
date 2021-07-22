@@ -33,7 +33,6 @@ test {
 apply plugin: "io.spinnaker.plugin.bundler"
 
 spinnakerBundle {
-	// Note: This pluginId value below must match with the value corresponding to the plugins in ~/.hal/default/profiles
 	pluginId = "Salesforce.FitResultsSpringLoaderPlugin"
 	description = "Plugin for creating custom spinnaker stage to perfom deployment of machine image, fetch the fit test run ID and display the FIT results in a single stage"
 	provider = "https://www.salesforce.com"
