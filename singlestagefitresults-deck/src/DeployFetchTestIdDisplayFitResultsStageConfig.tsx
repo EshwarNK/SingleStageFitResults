@@ -95,14 +95,11 @@ export class DeployFetchTestIdDisplayFitResultsStageConfig extends React.Compone
     return (
       <FormikStageConfig
         {...this.props}
-        stage={this.stage}
+        stage={this.props.stage}
+        application={this.props.application}
         onChange={this.props.updateStage}
         render={(props) => (
-          <DeployFetchTestIdDisplayFitResultsStageForm
-            {...props}
-            updateStageField={this.props.updateStage}
-            accounts={this.state.accounts}
-          />
+          <DeployFetchTestIdDisplayFitResultsStageForm {...props} updateStageField={this.props.updateStage} />
         )}
       />
     );

@@ -1,11 +1,13 @@
-import { capitalize, get, isBoolean, isEmpty, isString, map } from 'lodash';
+import { capitalize, get, isBoolean, isEmpty, isString, last, map, sortBy } from 'lodash';
 import React from 'react';
 import Select, { Option } from 'react-select';
 
 import {
   AccountService,
+  AccountTag,
   ArtifactTypePatterns,
   CheckboxInput,
+  DefaultPodNameProvider,
   ExecutionArtifactTab,
   ExecutionDetailsSection,
   ExecutionDetailsTasks,
@@ -21,16 +23,19 @@ import {
   IExpectedArtifact,
   IFormikStageConfigInjectedProps,
   IFormInputProps,
+  IJobOwnedPodStatus,
   IManifest,
   IStage,
   IStageConfigProps,
   IStageTypeConfig,
+  JobStageExecutionLogs,
   NumberInput,
   RadioButtonInput,
   ReactSelectInput,
   StageArtifactSelector,
   StageArtifactSelectorDelegate,
   StageConfigField,
+  StageFailureMessage,
   TextInput,
   Validators,
   yamlDocumentsToString,
@@ -62,12 +67,19 @@ export interface IKubernetesRunJobStageConfigState {
 }
 
 export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component<
-  IDeployManifestStageConfigFormProps & IFormikStageConfigInjectedProps & Partial<IStageConfigProps>,
-  IDeployManifestStageConfigFormState
+  Partial<IStageConfigProps> & IExecutionDetailsSectionProps
 > {
-  public runstate: IKubernetesRunJobStageConfigState = {
+  public state: IKubernetesRunJobStageConfigState = {
     credentials: [],
   };
+
+  private mostRecentlyCreatedPodName(podsStatuses: IJobOwnedPodStatus[]): string {
+    const sorted = sortBy(podsStatuses, (p: IJobOwnedPodStatus) => p.status.startTime);
+    const mostRecent = last(sorted);
+    return mostRecent ? mostRecent.name : '';
+  }
+
+  public static title = 'runJobConfig';
 
   private readonly excludedManifestArtifactTypes = [
     ArtifactTypePatterns.DOCKER_IMAGE,
@@ -76,76 +88,14 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
     ArtifactTypePatterns.MAVEN_FILE,
   ];
 
-  public constructor(props: IDeployManifestStageConfigFormProps & IFormikStageConfigInjectedProps & IStageConfigProps) {
+  constructor(props: IStageConfigProps) {
     super(props);
-    const stage = this.props.formik.values;
-    const manifests: any[] = get(props.formik.values, 'manifests');
-    const isTextManifest: boolean = get(props.formik.values, 'source') === ManifestSource.TEXT;
-    this.state = {
-      rawManifest: !isEmpty(manifests) && isTextManifest ? yamlDocumentsToString(manifests) : '',
-      overrideNamespace: get(stage, 'namespaceOverride', '') !== '',
-    };
-    const application = this.props;
-    const runstage = this.props;
-  }
-
-  private getSourceOptions = (): Array<Option<string>> => {
-    return map([ManifestSource.TEXT, ManifestSource.ARTIFACT], (option: any) => ({
-      label: capitalize(option),
-      value: option,
-    }));
-  };
-
-  private handleCopy = (manifest: IManifest): void => {
-    this.props.formik.setFieldValue('manifests', [manifest]);
-    this.setState({
-      rawManifest: yamlDocumentsToString([manifest]),
-    });
-  };
-
-  private handleRawManifestChange = (rawManifest: string, manifests: any): void => {
-    this.setState({
-      rawManifest,
-    });
-    this.props.formik.setFieldValue('manifests', manifests);
-  };
-
-  private onManifestArtifactSelected = (expectedArtifactId: string): void => {
-    this.props.formik.setFieldValue('manifestArtifactId', expectedArtifactId);
-    this.props.formik.setFieldValue('manifestArtifact', null);
-  };
-
-  private onManifestArtifactEdited = (artifact: IArtifact) => {
-    this.props.formik.setFieldValue('manifestArtifactId', null);
-    this.props.formik.setFieldValue('manifestArtifact', artifact);
-  };
-
-  private getRequiredArtifacts = (): IManifestBindArtifact[] => {
-    const { requiredArtifactIds, requiredArtifacts } = this.props.formik.values;
-    return (requiredArtifactIds || [])
-      .map((id: string) => ({ expectedArtifactId: id }))
-      .concat(requiredArtifacts || []);
-  };
-
-  private onRequiredArtifactsChanged = (bindings: IManifestBindArtifact[]): void => {
-    this.props.formik.setFieldValue(
-      'requiredArtifactIds',
-      bindings.filter((b) => b.expectedArtifactId).map((b) => b.expectedArtifactId),
-    );
-    this.props.formik.setFieldValue(
-      'requiredArtifacts',
-      bindings.filter((b) => b.artifact),
-    );
-  };
-
-  private overrideNamespaceChange(checked: boolean) {
-    if (!checked) {
-      this.props.formik.setFieldValue('namespaceOverride', '');
+    const { stage } = this.props;
+    if (!stage.source) {
+      stage.source = ManifestSource.TEXT;
     }
-    this.setState({ overrideNamespace: checked });
   }
 
-  // Run Job Manifest Stage
   public outputOptions = [
     { label: 'None', value: 'none' },
     { label: 'Logs', value: 'propertyFile' },
@@ -159,12 +109,27 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
     });
   };
 
-  public handleRawManifestChangeRunJobManifest = (rawManifest: string, manifests: any) => {
+  public handleRawManifestChange = (rawManifest: string, manifests: any) => {
     if (manifests) {
       this.props.updateStageField({ manifest: manifests[0] });
     }
     this.setState({ rawManifest });
   };
+
+  public initRawManifest() {
+    const { stage } = this.props;
+    if (stage.manifest) {
+      this.setState({ rawManifest: yamlDocumentsToString([stage.manifest]) });
+    }
+  }
+
+  public componentDidMount() {
+    this.props.updateStageField({ cloudProvider: 'kubernetes' });
+    AccountService.getAllAccountDetailsForProvider('kubernetes').then((accounts: any) => {
+      this.setState({ credentials: accounts });
+    });
+    this.initRawManifest();
+  }
 
   private sourceChanged = (event: any) => {
     this.props.updateStageField({ consumeArtifactSource: event.value });
@@ -185,14 +150,14 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
     });
   };
 
-  private onManifestArtifactSelectedRunJobManifest = (expectedArtifactId: string): void => {
+  private onManifestArtifactSelected = (expectedArtifactId: string): void => {
     this.props.updateStageField({
       manifestArtifactId: expectedArtifactId,
       manifestArtifact: null,
     });
   };
 
-  private onManifestArtifactEditedRunJobManifest = (artifact: IArtifact) => {
+  private onManifestArtifactEdited = (artifact: IArtifact) => {
     this.props.updateStageField({
       manifestArtifactId: null,
       manifestArtifact: artifact,
@@ -234,21 +199,21 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
     );
   }
 
-  private getSourceOptionsRunJobManifest = (): Array<Option<string>> => {
+  private getSourceOptions = (): Array<Option<string>> => {
     return map([ManifestSource.TEXT, ManifestSource.ARTIFACT], (option) => ({
       label: capitalize(option),
       value: option,
     }));
   };
 
-  private getRequiredArtifactsRunJobManifest = (): IManifestBindArtifact[] => {
+  private getRequiredArtifacts = (): IManifestBindArtifact[] => {
     const { requiredArtifactIds, requiredArtifacts } = this.props.stage;
     return (requiredArtifactIds || [])
       .map((id: string) => ({ expectedArtifactId: id }))
       .concat(requiredArtifacts || []);
   };
 
-  private onRequiredArtifactsChangedRunJobManifest = (bindings: IManifestBindArtifact[]): void => {
+  private onRequiredArtifactsChanged = (bindings: IManifestBindArtifact[]): void => {
     this.props.updateStageField({
       requiredArtifactIds: bindings.filter((b) => b.expectedArtifactId).map((b) => b.expectedArtifactId),
     });
@@ -256,189 +221,53 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
   };
 
   public render() {
-    const deploystage = this.props.formik.values;
     const { stage } = this.props;
-    // console.log(this.props);
+
     let outputSource = <div />;
-    if (stage?.consumeArtifactSource === 'propertyFile') {
+    if (stage.consumeArtifactSource === 'propertyFile') {
       outputSource = this.logSourceForm();
-    } else if (stage?.consumeArtifactSource === 'artifact') {
+    } else if (stage.consumeArtifactSource === 'artifact') {
       outputSource = this.artifactForm();
     }
 
     return (
       <div className="container-fluid form-horizontal">
-        <h3>
-          <b>Deploy Manifest Stage Configuration</b>
-        </h3>
         <h4>Basic Settings</h4>
         <ManifestBasicSettings
-          accounts={this.props.accounts}
-          onAccountSelect={(accountName) => this.props.formik.setFieldValue('account', accountName)}
-          selectedAccount={deploystage.account}
+          selectedAccount={stage.account || ''}
+          accounts={this.state.credentials}
+          onAccountSelect={(selectedAccount: string) => this.accountChanged(selectedAccount)}
         />
-        <StageConfigField label="Override Namespace">
-          <CheckboxInput
-            checked={this.state.overrideNamespace}
-            onChange={(e: any) => this.overrideNamespaceChange(e.target.checked)}
-          />
-        </StageConfigField>
-        {this.state.overrideNamespace && (
-          <StageConfigField label="Namespace">
-            <NamespaceSelector
-              createable={true}
-              accounts={this.props.accounts}
-              selectedAccount={deploystage.account}
-              selectedNamespace={deploystage.namespaceOverride || ''}
-              onChange={(namespace) => this.props.formik.setFieldValue('namespaceOverride', namespace)}
-            />
-          </StageConfigField>
-        )}
-        <hr />
         <h4>Manifest Configuration</h4>
         <StageConfigField label="Manifest Source" helpKey="kubernetes.manifest.source">
           <RadioButtonInput
             options={this.getSourceOptions()}
-            onChange={(e: any) => this.props.formik.setFieldValue('source', e.target.value)}
-            value={deploystage.source}
+            onChange={(e: any) => this.props.updateStageField({ source: e.target.value })}
+            value={stage.source}
           />
         </StageConfigField>
-        {deploystage?.source === ManifestSource.TEXT && (
-          <StageConfigField label="Manifest">
-            <CopyFromTemplateButton application={this.props.application} handleCopy={this.handleCopy} />
-            <YamlEditor onChange={this.handleRawManifestChange} value={this.state.rawManifest} />
-          </StageConfigField>
+        {stage.source === ManifestSource.TEXT && (
+          <YamlEditor value={this.state.rawManifest} onChange={this.handleRawManifestChange} />
         )}
-        {deploystage?.source === ManifestSource.ARTIFACT && (
+        {stage.source === ManifestSource.ARTIFACT && (
           <>
             <StageArtifactSelectorDelegate
-              artifact={deploystage.manifestArtifact}
+              artifact={stage.manifestArtifact}
               excludedArtifactTypePatterns={this.excludedManifestArtifactTypes}
-              expectedArtifactId={deploystage.manifestArtifactId}
+              expectedArtifactId={stage.manifestArtifactId}
               helpKey="kubernetes.manifest.expectedArtifact"
               label="Manifest Artifact"
               onArtifactEdited={this.onManifestArtifactEdited}
               onExpectedArtifactSelected={(artifact: IExpectedArtifact) => this.onManifestArtifactSelected(artifact.id)}
               pipeline={this.props.pipeline}
-              stage={deploystage}
+              stage={stage}
             />
-            <StageConfigField label="Expression Evaluation" helpKey="kubernetes.manifest.skipExpressionEvaluation">
-              <CheckboxInput
-                checked={deploystage.skipExpressionEvaluation === true}
-                onChange={(e: any) => this.props.formik.setFieldValue('skipExpressionEvaluation', e.target.checked)}
-                text="Skip SpEL expression evaluation"
-              />
-            </StageConfigField>
           </>
         )}
         <StageConfigField label="Required Artifacts to Bind" helpKey="kubernetes.manifest.requiredArtifactsToBind">
           <ManifestBindArtifactsSelector
             bindings={this.getRequiredArtifacts()}
             onChangeBindings={this.onRequiredArtifactsChanged}
-            pipeline={this.props.pipeline}
-            stage={deploystage}
-          />
-        </StageConfigField>
-        <hr />
-        <ManifestDeploymentOptions
-          accounts={this.props.accounts}
-          config={deploystage.trafficManagement}
-          onConfigChange={(config) => this.props.formik.setFieldValue('trafficManagement', config)}
-          selectedAccount={deploystage.account}
-        />
-
-        <hr />
-        <h3>
-          <b>Run Job Manifest Stage Configuration</b>
-        </h3>
-        <h4>Basic Settings</h4>
-        <ManifestBasicSettings
-          selectedAccount={stage?.account || ''}
-          accounts={this.runstate.credentials}
-          onAccountSelect={(selectedAccount: string) => this.accountChanged(selectedAccount)}
-        />
-
-        <hr />
-        <h4>Manifest Configuration</h4>
-        <StageConfigField label="Manifest Source" helpKey="kubernetes.manifest.source">
-          <RadioButtonInput
-            options={this.getSourceOptionsRunJobManifest()}
-            onChange={(e: any) => this.props.updateStageField({ source: e.target.value })}
-            // onChange = {(e: any) => {console.log(stage?.source)}}
-            value={stage?.source}
-          />
-        </StageConfigField>
-        {stage?.source === ManifestSource.TEXT && (
-          <YamlEditor value={this.runstate.rawManifest} onChange={this.handleRawManifestChangeRunJobManifest} />
-        )}
-        {stage?.source === ManifestSource.ARTIFACT && (
-          <>
-            <StageArtifactSelectorDelegate
-              artifact={stage.manifestArtifact}
-              excludedArtifactTypePatterns={this.excludedManifestArtifactTypes}
-              expectedArtifactId={stage.manifestArtifactId}
-              helpKey="kubernetes.manifest.expectedArtifact"
-              label="Manifest Artifact"
-              onArtifactEdited={this.onManifestArtifactEditedRunJobManifest}
-              onExpectedArtifactSelected={(artifact: IExpectedArtifact) =>
-                this.onManifestArtifactSelectedRunJobManifest(artifact.id)
-              }
-              pipeline={this.props.pipeline}
-              stage={stage}
-            />
-          </>
-        )}
-        {/* <StageConfigField label="Required Artifacts to Bind" helpKey="kubernetes.manifest.requiredArtifactsToBind">
-          <ManifestBindArtifactsSelector
-            bindings={this.getRequiredArtifactsRunJobManifest()}
-            onChangeBindings={this.onRequiredArtifactsChangedRunJobManifest}
-            pipeline={this.props.pipeline}
-            stage={stage}
-          />
-        </StageConfigField> */}
-        <h4>Output</h4>
-        <StageConfigField label="Capture Output From" helpKey="kubernetes.runJob.captureSource">
-          <div>
-            <Select
-              clearable={false}
-              options={this.outputOptions}
-              value={stage?.consumeArtifactSource}
-              onChange={this.sourceChanged}
-            />
-          </div>
-        </StageConfigField>
-        {outputSource}
-
-        {/* <h4>Manifest Configuration</h4>
-        <StageConfigField label="Manifest Source" helpKey="kubernetes.manifest.source">
-          <RadioButtonInput
-            options={this.getSourceOptionsRunJobManifest()}
-            onChange={(e: any) => this.props.updateStageField({ source: e?.target.value })}
-            value={stage?.source}
-          />
-        </StageConfigField>
-        {stage?.source === ManifestSource.TEXT && (
-          <YamlEditor value={this.runstate.rawManifest} onChange={this.handleRawManifestChangeRunJobManifest} />
-        )}
-        {stage?.source === ManifestSource.ARTIFACT && (
-          <>
-            <StageArtifactSelectorDelegate
-              artifact={stage.manifestArtifact}
-              excludedArtifactTypePatterns={this.excludedManifestArtifactTypes}
-              expectedArtifactId={stage.manifestArtifactId}
-              helpKey="kubernetes.manifest.expectedArtifact"
-              label="Manifest Artifact"
-              onArtifactEdited={this.onManifestArtifactEditedRunJobManifest}
-              onExpectedArtifactSelected={(artifact: IExpectedArtifact) => this.onManifestArtifactSelectedRunJobManifest(artifact.id)}
-              pipeline={this.props.pipeline}
-              stage={stage}
-            />
-          </>
-        )}
-        <StageConfigField label="Required Artifacts to Bind" helpKey="kubernetes.manifest.requiredArtifactsToBind">
-          <ManifestBindArtifactsSelector
-            bindings={this.getRequiredArtifactsRunJobManifest()}
-            onChangeBindings={this.onRequiredArtifactsChangedRunJobManifest}
             pipeline={this.props.pipeline}
             stage={stage}
           />
@@ -453,32 +282,8 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
               onChange={this.sourceChanged}
             />
           </div>
-        </StageConfigField> */}
-        {/* {outputSource} */}
-        <hr />
-        <h3>
-          <b>Check Preconditions Configuration</b>
-        </h3>
-        <StageConfigField label="Preconditions">
-          <table className="table table-condensed">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th className="precondition-details">Details</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <td color="7">
-                  <button className="btn btn-block add-new" ng-click="preconditionListCtrl.addPrecondition(strategy)">
-                    <span className="glyphicon glyphicon-plus-sign"></span> Add Precondition
-                  </button>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
         </StageConfigField>
+        {outputSource}
       </div>
     );
   }
