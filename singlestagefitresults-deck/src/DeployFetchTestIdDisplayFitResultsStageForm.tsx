@@ -455,6 +455,30 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
           </div>
         </StageConfigField> */}
         {/* {outputSource} */}
+        <hr />
+        <h3>
+          <b>Check Preconditions Stage</b>
+        </h3>
+        <StageConfigField label="Preconditions">
+          <table className="table table-condensed">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th className="precondition-details">Details</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <td color="7">
+                  <button className="btn btn-block add-new" ng-click="preconditionListCtrl.addPrecondition(strategy)">
+                    <span className="glyphicon glyphicon-plus-sign"></span> Add Precondition
+                  </button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </StageConfigField>
       </div>
     );
   }
