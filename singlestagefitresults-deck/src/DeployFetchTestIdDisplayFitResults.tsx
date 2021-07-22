@@ -68,8 +68,9 @@ export const initialize = () => {
 export const deployFetchTestIdDisplayFitResults: IStageTypeConfig = {
   //Note: the key here should match with the name mentioned in the @StageDefinitionBuilder.Aliases({}) in DeployFetchTestIdDisplayFitResults.java
   key: 'DeployFetchTestIdDisplayFitResults',
-  label: `Deploy(DeployGetTestIDFetchResults)`,
-  description: 'Stage that performs deployment, retrieves testID and fetch results',
+  label: `Deploy, Run, Check Preconditions`,
+  description:
+    'Deploy Kubernetes manifest yaml/json file, Run Kubernetes job manifest yaml/json file, Check for preconditions before continuing',
   component: DeployFetchTestIdDisplayFitResultsStageConfig,
   executionDetailsSections: [DeployStatus, ExecutionDetailsTasks, ExecutionArtifactTab],
 };

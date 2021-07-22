@@ -457,7 +457,7 @@ export class DeployFetchTestIdDisplayFitResultsStageForm extends React.Component
         {/* {outputSource} */}
         <hr />
         <h3>
-          <b>Check Preconditions Stage</b>
+          <b>Check Preconditions Configuration</b>
         </h3>
         <StageConfigField label="Preconditions">
           <table className="table table-condensed">
